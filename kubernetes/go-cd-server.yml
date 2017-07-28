@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: gocd-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: gocd-server
+        app: gocd-server
+    spec:
+      hostname: gocd-server
+      containers:
+      - name: gocd-server
+        image: mfanderson/gocd_server
+        ports:
+        - containerPort: 8154
+        - containerPort: 8153
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: gocd-server
+  labels:
+    run: gocd-server
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8153
+    protocol: TCP
+    name: http
+    targetPort: 8153
+  - port: 8154
+    protocol: TCP
+    name: https
+    targetPort: 8154
+  selector:
+    run: gocd-server
