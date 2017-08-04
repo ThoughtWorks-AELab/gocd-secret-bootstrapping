@@ -7,6 +7,7 @@ import json
 import hvac
 
 def build_pipeline(gocd_host, pipeline_name, vault_server, vault_token):
+
     configurator = GoCdConfigurator(HostRestClient(gocd_host))
 
     pipeline = configurator \
@@ -67,13 +68,9 @@ def setup_policy(pipeline_name, vault_server, vault_token):
     # that the policy is committed to git, then the pipeline pushes it to vault.
 
     policy = f"""
-    path "sys" {{
-        policy = "deny"
-    }}
-
-    path "secret/app/pipeline/{pipeline_name}" {{
-        policy = "read"
-    }}
+path "secret/app/pipeline/{pipeline_name}/*" {{
+    capabilities = ["read"]
+}}
     """
     
     client = hvac.Client(url=vault_server, token=vault_token) 
@@ -94,20 +91,20 @@ def run():
     setup_policy(
         pipeline_name,
         vault_server = os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_TOKEN']
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
     )
 
     set_registry_credentials(
         pipeline_name,
-        vault_server=os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_TOKEN']
+        vault_server = os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
     )
 
     build_pipeline(
-        gocd_host=os.environ['GO_SERVER_HOST'],
-        pipeline_name=pipeline_name,
-        vault_server=os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_TOKEN']
+        gocd_host = os.environ['GO_SERVER_HOST'],
+        pipeline_name = pipeline_name,
+        vault_server = os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
     )
 
 run()
