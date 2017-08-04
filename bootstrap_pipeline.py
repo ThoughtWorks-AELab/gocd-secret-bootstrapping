@@ -71,7 +71,7 @@ def setup_policy(pipeline_name, vault_server, vault_token):
         policy = "deny"
     }}
 
-    path "secret/app/{pipeline_name}" {{
+    path "secret/app/pipeline/{pipeline_name}" {{
         policy = "read"
     }}
     """
@@ -81,8 +81,10 @@ def setup_policy(pipeline_name, vault_server, vault_token):
     pass
 
 def set_registry_credentials(pipeline_name, vault_server, vault_token):
-    # TODO: set write the credentials for the container registry
-    pass
+    client = hvac.Client(url=vault_server, token=vault_token)
+    client.write(f'secret/app/pipeline/{pipeline_name}/registry', 
+        username=os.environ['REGISTRY_USERNAME'], 
+        password=os.environ['REGISTRY_PASSWORD'])
 
 def run():
     
@@ -91,7 +93,7 @@ def run():
 
     setup_policy(
         pipeline_name,
-        vault_server=os.environ['VAULT_SERVER'],
+        vault_server = os.environ['VAULT_SERVER'],
         vault_token = os.environ['VAULT_TOKEN']
     )
 
