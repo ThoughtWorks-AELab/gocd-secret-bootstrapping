@@ -6,11 +6,7 @@ import urllib.request
 import json
 import hvac
 
-app_name = "hello-secret-world"
-pipeline_name = app_name + "-pipeline"
-gocd_host = os.environ['GO_SERVER_HOST']
-vault_token = os.environ['VAULT_TOKEN']
-vault_server = os.environ['VAULT_SERVER']
+
 
 def setup_policy():
     # TODO: write the policy for the pipeline
@@ -21,7 +17,7 @@ def set_registry_credentials():
     pass
 
 
-def build_pipeline():
+def build_pipeline(gocd_host, pipeline_name, vault_server, vault_token):
     configurator = GoCdConfigurator(HostRestClient(gocd_host))
 
     pipeline = configurator \
@@ -39,9 +35,9 @@ def build_pipeline():
     build_docker_image_job = build_image_stage.ensure_job("build_docker_image")
     build_docker_image_job.add_task(ExecTask(['make', 'push']))
 
-    approle = setup_app_role()
+    approle = setup_app_role(pipeline_name, vault_server, vault_token)
     build_docker_image_job.ensure_encrypted_environment_variables({
-        "VAULT_SECRET_ID": encrypt(approle['secret_id'])
+        "VAULT_SECRET_ID": encrypt(approle['secret_id'], gocd_host)
     })
 
     build_docker_image_job.ensure_environment_variables({
@@ -50,7 +46,7 @@ def build_pipeline():
 
     configurator.save_updated_config()
 
-def encrypt(value):
+def encrypt(value, gocd_host):
     data = json.dumps({
         "value":value
     }).encode('ascii')
@@ -63,7 +59,7 @@ def encrypt(value):
     secret = payload['encrypted_value']
     return secret
 
-def setup_app_role():
+def setup_app_role(pipeline_name, vault_server, vault_token):
     client = hvac.Client(url=vault_server, token=vault_token)
 
     #Enable the app role
@@ -77,4 +73,16 @@ def setup_app_role():
     
     return {"role_id": role_id, "secret_id": secret_id}
 
-# build_pipeline()
+def run():
+    
+    app_name = "hello-secret-world"
+    pipeline_name = app_name + "-pipeline"
+
+    build_pipeline(
+        gocd_host=os.environ['GO_SERVER_HOST'],
+        pipeline_name=pipeline_name,
+        vault_server=os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_TOKEN']
+    )
+
+run()
