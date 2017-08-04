@@ -6,17 +6,6 @@ import urllib.request
 import json
 import hvac
 
-
-
-def setup_policy():
-    # TODO: write the policy for the pipeline
-    pass
-
-def set_registry_credentials():
-    # TODO: set write the credentials for the container registry
-    pass
-
-
 def build_pipeline(gocd_host, pipeline_name, vault_server, vault_token):
     configurator = GoCdConfigurator(HostRestClient(gocd_host))
 
@@ -63,9 +52,9 @@ def setup_app_role(pipeline_name, vault_server, vault_token):
     client = hvac.Client(url=vault_server, token=vault_token)
 
     #Enable the app role
-    client.write(f'auth/approle/role/{pipeline_name}')
+    client.write(f'auth/approle/role/{pipeline_name}', policies=f"{pipeline_name}-policy")
 
-    # #Get the app id
+    #Get the app id
     role_id = client.read(f'auth/approle/role/{pipeline_name}/role-id')['data']['role_id']
 
     #Get the secret
@@ -73,10 +62,44 @@ def setup_app_role(pipeline_name, vault_server, vault_token):
     
     return {"role_id": role_id, "secret_id": secret_id}
 
+def setup_policy(pipeline_name, vault_server, vault_token):
+    # This is just for testing. The real implementation, covered in #645 would indicate
+    # that the policy is committed to git, then the pipeline pushes it to vault.
+
+    policy = f"""
+    path "sys" {{
+        policy = "deny"
+    }}
+
+    path "secret/app/{pipeline_name}" {{
+        policy = "read"
+    }}
+    """
+    
+    client = hvac.Client(url=vault_server, token=vault_token) 
+    client.set_policy(f"{pipeline_name}-policy", policy) 
+    pass
+
+def set_registry_credentials(pipeline_name, vault_server, vault_token):
+    # TODO: set write the credentials for the container registry
+    pass
+
 def run():
     
     app_name = "hello-secret-world"
     pipeline_name = app_name + "-pipeline"
+
+    setup_policy(
+        pipeline_name,
+        vault_server=os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_TOKEN']
+    )
+
+    set_registry_credentials(
+        pipeline_name,
+        vault_server=os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_TOKEN']
+    )
 
     build_pipeline(
         gocd_host=os.environ['GO_SERVER_HOST'],
