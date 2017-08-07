@@ -6,6 +6,30 @@ import urllib.request
 import json
 import hvac
 
+def run():
+    
+    app_name = "hello-secret-world"
+    pipeline_name = app_name + "-pipeline"
+
+    setup_policy(
+        pipeline_name,
+        vault_server = os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
+    )
+
+    set_registry_credentials(
+        pipeline_name,
+        vault_server = os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
+    )
+
+    build_pipeline(
+        gocd_host = os.environ['GO_SERVER_HOST'],
+        pipeline_name = pipeline_name,
+        vault_server = os.environ['VAULT_SERVER'],
+        vault_token = os.environ['VAULT_SERVER_TOKEN']
+    )
+
 def build_pipeline(gocd_host, pipeline_name, vault_server, vault_token):
 
     configurator = GoCdConfigurator(HostRestClient(gocd_host))
@@ -79,32 +103,8 @@ path "secret/app/pipeline/{pipeline_name}/*" {{
 
 def set_registry_credentials(pipeline_name, vault_server, vault_token):
     client = hvac.Client(url=vault_server, token=vault_token)
-    client.write(f'secret/app/pipeline/{pipeline_name}/registry', 
+    client.write(f'secret/app/pipeline/{pipeline_name}/registry', #TODO: change this convention
         username=os.environ['REGISTRY_USERNAME'], 
         password=os.environ['REGISTRY_PASSWORD'])
-
-def run():
-    
-    app_name = "hello-secret-world"
-    pipeline_name = app_name + "-pipeline"
-
-    setup_policy(
-        pipeline_name,
-        vault_server = os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_SERVER_TOKEN']
-    )
-
-    set_registry_credentials(
-        pipeline_name,
-        vault_server = os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_SERVER_TOKEN']
-    )
-
-    build_pipeline(
-        gocd_host = os.environ['GO_SERVER_HOST'],
-        pipeline_name = pipeline_name,
-        vault_server = os.environ['VAULT_SERVER'],
-        vault_token = os.environ['VAULT_SERVER_TOKEN']
-    )
-
+        
 run()
