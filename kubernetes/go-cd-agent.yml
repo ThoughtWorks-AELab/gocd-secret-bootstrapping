@@ -24,6 +24,11 @@ spec:
             value: https://gocd-server:8154/go
           - name: DOCKER_API_VERSION
             value: "1.23"
+          - name: GO_EA_AUTO_REGISTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: go-secrets
+                key: autoregister-key
         command: ["/bin/sh"]
         #TODO: this is probably a bad idea, particularly if the core kubernetes cluster is using the same docker runtime
         args: ['-c', 'chmod 0777 /var/run/docker.sock; ./docker-entrypoint.sh'] 

@@ -2,10 +2,7 @@
 all: run
 
 run:
-	kubectl create -f ./kubernetes/go-cd-server.yml
-	kubectl create -f ./kubernetes//go-cd-agent.yml
-	kubectl create -f ./kubernetes/vault.yml
-	minikube service list
+	./bin/start.sh
 
 clean:
 	-kubectl delete deployment gocd-server	
@@ -13,3 +10,4 @@ clean:
 	-kubectl delete deployment gocd-agent
 	-kubectl delete deployment vault
 	-kubectl delete service vault
+	-kubectl delete secret go-secrets

@@ -9,7 +9,6 @@ Demonstrates the process of bootstrapping a GoCD instance with app role. This is
 * A little bit better bootstrap automation
     * Better token handling on Vault spin up
     * Plugging the service hosts into the bootstrap script so you don't have to mess with them
-    * Auto-register go agents
     
 It is also dependent on another repo for demonstrating how the secret is used to push to a container repo.
 
