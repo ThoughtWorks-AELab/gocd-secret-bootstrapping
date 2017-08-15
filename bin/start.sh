@@ -11,4 +11,6 @@ fi
 
 kubectl create -f ./kubernetes/go-cd-agent.yml
 kubectl create -f ./kubernetes/vault.yml
+./bin/set-vault-cert.py
+
 minikube service list

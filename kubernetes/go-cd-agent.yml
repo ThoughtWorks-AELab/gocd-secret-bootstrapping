@@ -8,6 +8,7 @@ spec:
     metadata:
       labels:
         run: gocd-agent
+        app: gocd-agent
     spec:
       volumes:
         - name: docker-socket
@@ -29,6 +30,10 @@ spec:
               secretKeyRef:
                 name: go-secrets
                 key: autoregister-key
+          - name: VAULT_CACERT
+            value: /etc/vault/certificates/vault.pem
+          - name: VAULT_ADDR
+            value: https://vault:8200
         command: ["/bin/sh"]
         #TODO: this is probably a bad idea, particularly if the core kubernetes cluster is using the same docker runtime
         args: ['-c', 'chmod 0777 /var/run/docker.sock; ./docker-entrypoint.sh'] 

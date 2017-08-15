@@ -8,6 +8,7 @@ spec:
     metadata:
       labels:
         run: vault
+        app: vault
     spec:
       containers:
       - name: vault

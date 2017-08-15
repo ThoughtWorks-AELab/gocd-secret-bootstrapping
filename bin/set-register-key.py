@@ -32,7 +32,6 @@ def register_key():
 
 def run():
     key = register_key()
-    print("key = " + key)
     result = subprocess.run(["kubectl", "create", "secret", "generic", "go-secrets", f"--from-literal=autoregister-key={key}"], 
             check=True)
 

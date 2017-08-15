@@ -37,7 +37,7 @@ def build_pipeline(gocd_host, pipeline_name, vault_server, vault_token):
     pipeline = configurator \
         .ensure_pipeline_group("hello_world_group") \
         .ensure_replacement_of_pipeline("hello_world_app") \
-        .set_git_url("https://github.com/danielsomerfield/hello-secret-world.git")
+        .set_git_url("https://github.com/ThoughtWorks-AELab/hello-secret-world.git")
 
     build_stage = pipeline.ensure_stage("build")
     build_stage.ensure_job("init")
