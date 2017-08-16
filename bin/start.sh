@@ -1,6 +1,8 @@
 #!/bin/bash
-
 set -e
+
+. ./.env
+. ./.pythonenv/bin/activate
 
 kubectl create -f ./kubernetes/go-cd-server.yml
 
@@ -9,6 +11,5 @@ kubectl create -f ./kubernetes/go-cd-server.yml
 kubectl create -f ./kubernetes/go-cd-agent.yml
 kubectl create -f ./kubernetes/vault.yml
 kubectl create -f ./kubernetes/vault-setup.yml
-# ./bin/set-vault-cert.py
 
 minikube service list
