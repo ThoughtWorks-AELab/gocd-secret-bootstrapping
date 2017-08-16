@@ -16,6 +16,14 @@ spec:
         image: danielsomerfield/vault
         ports:
         - containerPort: 8200
+        volumeMounts:
+          - mountPath: /etc/vault/certs/
+            name: vault-certificate
+            readOnly: false
+      volumes:
+      - name: vault-certificate
+        hostPath:
+          path: /vault-certificate
 ---
 
 apiVersion: v1

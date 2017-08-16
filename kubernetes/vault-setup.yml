@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-setup
+spec:
+  template:
+    metadata:
+      name: vault-setup
+    spec:
+      containers:
+      - name: vault-init
+        image: danielsomerfield/vault-init
+        env:
+          - name: VAULT_CACERT
+            value: /etc/vault/certificates/vault.pem
+          - name: VAULT_ADDR
+            value: https://vault:8200
+        volumeMounts:
+          - mountPath: /etc/vault/certificates
+            name: vault-certificate
+            readOnly: true
+      restartPolicy: Never
+      volumes:
+        - name: vault-certificate
+          hostPath:
+            path: /vault-certificate

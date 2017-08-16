@@ -14,6 +14,9 @@ spec:
         - name: docker-socket
           hostPath:
             path: /var/run/docker.sock
+        - name: vault-certificate
+          hostPath:
+            path: /vault-certificate
       containers:
       - name: gocd-agent
         imagePullPolicy: Always
@@ -41,3 +44,6 @@ spec:
           - name: docker-socket
             mountPath: /var/run/docker.sock
             readOnly: false
+          - mountPath: /etc/vault/certificates
+            name: vault-certificate
+            readOnly: true

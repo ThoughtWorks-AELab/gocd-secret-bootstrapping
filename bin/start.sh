@@ -3,14 +3,12 @@
 set -e
 
 kubectl create -f ./kubernetes/go-cd-server.yml
-key=`./bin/set-register-key.py`
-if [[ $? != 0 ]]; then
-    echo "Failed to get key: $key"
-    exit 1
-fi
+
+./bin/set-register-key.py
 
 kubectl create -f ./kubernetes/go-cd-agent.yml
 kubectl create -f ./kubernetes/vault.yml
-./bin/set-vault-cert.py
+kubectl create -f ./kubernetes/vault-setup.yml
+# ./bin/set-vault-cert.py
 
 minikube service list
