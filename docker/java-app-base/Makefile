@@ -2,10 +2,10 @@
 all: push
 
 build:
-	docker build --tag "danielsomerfield/java-app-base" .
+	docker build --tag "${REGISTRY_USERNAME}/java-app-base" .
 
 push: build
-	docker push danielsomerfield/java-app-base
+	docker push ${REGISTRY_USERNAME}/java-app-base
 
 clean:
-	docker rmi -f danielsomerfield/java-app-base
+	docker rmi -f ${REGISTRY_USERNAME}/java-app-base

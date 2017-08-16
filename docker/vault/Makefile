@@ -4,10 +4,10 @@ all: push
 STAMP=`date +'%Y-%m-%d_%H%M%S'`
 
 build:
-	docker build --tag "danielsomerfield/vault:latest" --tag "danielsomerfield/vault:${STAMP}" .
+	docker build --tag "${REGISTRY_USERNAME}/vault:latest" --tag "${REGISTRY_USERNAME}/vault:${STAMP}" .
 
 push: build
-	docker push danielsomerfield/vault
+	docker push ${REGISTRY_USERNAME}/vault
 
 clean:
-	docker rmi -f danielsomerfield/vault
+	docker rmi -f ${REGISTRY_USERNAME}/vault

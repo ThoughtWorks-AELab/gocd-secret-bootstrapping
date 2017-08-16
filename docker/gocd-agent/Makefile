@@ -4,10 +4,10 @@ all: push
 STAMP=`date +'%Y-%m-%d_%H%M%S'`
 
 build:
-	docker build --tag "danielsomerfield/gocd-agent-java:latest" --tag "danielsomerfield/gocd-agent-java:${STAMP}" .
+	docker build --tag "${REGISTRY_USERNAME}/gocd-agent-java:latest" --tag "${REGISTRY_USERNAME}/gocd-agent-java:${STAMP}" .
 
 push: build
-	docker push danielsomerfield/gocd-agent-java
+	docker push ${REGISTRY_USERNAME}/gocd-agent-java
 
 clean:
-	docker rmi -f danielsomerfield/gocd-agent-java
+	docker rmi -f ${REGISTRY_USERNAME}/gocd-agent-java
