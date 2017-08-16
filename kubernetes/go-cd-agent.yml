@@ -20,7 +20,7 @@ spec:
       containers:
       - name: gocd-agent
         imagePullPolicy: Always
-        image: danielsomerfield/gocd-agent-java
+        image: ${REGISTRY_USERNAME}/gocd-agent-java
         ports:
         - containerPort: 8080
         env:

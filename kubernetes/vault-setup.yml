@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
       - name: vault-init
-        image: danielsomerfield/vault-init
+        image: ${REGISTRY_USERNAME}/vault-init
         env:
           - name: VAULT_CACERT
             value: /etc/vault/certificates/vault.pem

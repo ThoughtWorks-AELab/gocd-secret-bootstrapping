@@ -13,7 +13,7 @@ spec:
       containers:
       - name: vault
         imagePullPolicy: Always
-        image: danielsomerfield/vault
+        image: ${REGISTRY_USERNAME}/vault
         ports:
         - containerPort: 8200
         volumeMounts:
