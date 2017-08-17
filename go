@@ -6,7 +6,7 @@ import json
 
 def run():
     if len(sys.argv) == 1:
-        print_help()
+        print_help(sys.argv)
 
     get_command(sys.argv[1])(sys.argv)
 
@@ -44,10 +44,15 @@ def destroy_cluster(args):
 def start_pipeline_service(args):
     # prompt for the secret
     token = input('Enter token: ')
-    
+    username = input('Enter docker hub username: ')
+    password = input('Enter docker hub password: ')
+
     # set the token as a kube secret
-    result = subprocess.run(["kubectl", "create", "secret", "generic", "pipelineservice-secrets",
-        f"--from-literal=vault-token={token}"], check=True)
+    result = subprocess.run([
+        "kubectl", "create", "secret", "generic", "pipelineservice-secrets",
+        f"--from-literal=vault-token={token}", f"--from-literal=registry-username={username}",
+        f"--from-literal=registry-password={password}"],
+        check=True)
 
     # run the service
     subprocess.run(['bin/start-service.sh']) 

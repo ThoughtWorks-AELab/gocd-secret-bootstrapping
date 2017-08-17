@@ -26,6 +26,16 @@ spec:
               secretKeyRef:
                 name: pipelineservice-secrets
                 key: vault-token
+          - name: REGISTRY_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: pipelineservice-secrets
+                key: registry-username
+          - name: REGISTRY_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pipelineservice-secrets
+                key: registry-password
         volumeMounts:
           - mountPath: /etc/vault/certificates
             name: vault-certificate

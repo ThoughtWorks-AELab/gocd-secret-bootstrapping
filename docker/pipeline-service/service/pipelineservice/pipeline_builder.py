@@ -1,4 +1,5 @@
 import json
+import os
 import urllib.request
 
 from gomatic import *
@@ -15,6 +16,7 @@ class PipelineBuilder:
         pipeline_name = app_name + "-pipeline"
         self.build_policy(pipeline_name)
         self.create_go_pipeline(app_name, pipeline_name, git_repo, team_name)
+        self.set_registry_credentials(pipeline_name, team_name)
 
     def build_policy(self, pipeline_name):
         policy = f"""
@@ -36,6 +38,21 @@ class PipelineBuilder:
         secret_id = self.vault_client.write(f'auth/approle/role/{pipeline_name}/secret-id')['data']['secret_id']
 
         return {"role_id": role_id, "secret_id": secret_id}
+
+    # This is a dummy implementation that takes credentials from an env variable for
+    def get_credentials_for_team(self, team_name):
+        return {
+            'username': os.environ['REGISTRY_USERNAME'],
+            'password': os.environ['REGISTRY_PASSWORD']
+        }
+
+    def set_registry_credentials(self, pipeline_name, team_name):
+        credentials = self.get_credentials_for_team(team_name)
+
+        self.vault_client.write(f'secret/app/pipeline/{pipeline_name}/registry',
+                                username=credentials['username'],
+                                password=credentials['password']
+                                )
 
     def create_go_pipeline(self, app_name, pipeline_name, git_repo, team_name):
         pipeline = self.go_configurator \
