@@ -9,7 +9,7 @@ from pipelineservice.pipeline_command import PipelineCommand
 app = Flask(__name__)
 
 token = os.environ['TOKEN']
-vault_client = hvac.Client(url='https://vault', token=token, verify="/etc/vault/certificates/vault.pem")
+vault_client = hvac.Client(url='https://vault:8200', token=token, verify="/etc/vault/certificates/vault.pem")
 
 
 @app.route('/pipelines/', methods=['POST'])
@@ -22,7 +22,7 @@ def post_pipelines():
         }), 400
     else:
         try:
-            PipelineBuilder(vault_client, "gocd-server").build_pipeline(cmd.app_name, cmd.repo, cmd.team_name)
+            PipelineBuilder(vault_client, "gocd-server:8153").build_pipeline(cmd.app_name, cmd.repo, cmd.team_name)
         except Exception as e:
             app.logger.error("Failed with exception " + str(e))
             return jsonify({
@@ -32,10 +32,6 @@ def post_pipelines():
         return jsonify({
             "result": "Created"
         })
-
-
-if __name__ == '__main__':
-    app.run()
 
 
 def to_command(json):

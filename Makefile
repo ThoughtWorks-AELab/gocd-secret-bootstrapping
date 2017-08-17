@@ -11,4 +11,7 @@ clean:
 	-kubectl delete deployment vault
 	-kubectl delete service vault
 	-kubectl delete secret go-secrets
+	-kubectl delete service pipeline-service
+	-kubectl delete deployment pipeline-service
+	-kubectl delete secret pipelineservice-secrets
 	-kubectl delete job vault-setup

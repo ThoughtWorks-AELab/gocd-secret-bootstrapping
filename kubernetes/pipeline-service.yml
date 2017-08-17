@@ -26,10 +26,25 @@ spec:
               secretKeyRef:
                 name: pipelineservice-secrets
                 key: vault-token
-        command: ["/bin/sh"]
-        #TODO: this is probably a bad idea, particularly if the core kubernetes cluster is using the same docker runtime
-        args: ['-c', 'chmod 0777 /var/run/docker.sock; ./docker-entrypoint.sh'] 
         volumeMounts:
           - mountPath: /etc/vault/certificates
             name: vault-certificate
             readOnly: true
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pipeline-service
+  labels:
+    run: pipeline-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5000
+    protocol: TCP
+    name: http
+    targetPort: 5000
+  selector:
+    run: pipeline-service

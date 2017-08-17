@@ -22,6 +22,7 @@ subjectAltName = @alt_names
 
 [alt_names]
 IP.1 = $VAULT_SERVICE_HOST
+IP.2 = 127.0.0.1
 DNS.1 = vault
 
 EOF
