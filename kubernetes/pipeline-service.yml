@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: pipeline-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: pipeline-service
+        app: pipeline-service
+    spec:
+      volumes:
+        - name: vault-certificate
+          hostPath:
+            path: /vault-certificate
+      containers:
+      - name: pipeline-service
+        imagePullPolicy: Always
+        image: ${REGISTRY_USERNAME}/pipeline-service
+        ports:
+        - containerPort: 5000
+        env:
+          - name: TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: pipelineservice-secrets
+                key: vault-token
+        command: ["/bin/sh"]
+        #TODO: this is probably a bad idea, particularly if the core kubernetes cluster is using the same docker runtime
+        args: ['-c', 'chmod 0777 /var/run/docker.sock; ./docker-entrypoint.sh'] 
+        volumeMounts:
+          - mountPath: /etc/vault/certificates
+            name: vault-certificate
+            readOnly: true
