@@ -5,8 +5,9 @@ import xml.etree.ElementTree as ET
 from time import sleep
 
 def get_register_key(instance_name):
-    contents = subprocess.check_output(["kubectl", "exec", "-it", instance_name, "--", "cat", "/go-working-dir/config/cruise-config.xml"])
-    doc = ET.fromstring(contents)
+    result = subprocess.run(["kubectl", "exec", "-it", instance_name, "--", "cat", 
+        "/go-working-dir/config/cruise-config.xml"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    doc = ET.fromstring(result.stdout)
     server_element = doc.find('server')
     if server_element != None:
         key = server_element.attrib['agentAutoRegisterKey']
@@ -31,8 +32,10 @@ def register_key():
         raise Exception("Failed to get register key: " + str(error))
 
 def run():
+    print("Setting up Go CD agent auto-register.")
     key = register_key()
     result = subprocess.run(["kubectl", "create", "secret", "generic", "go-secrets", f"--from-literal=autoregister-key={key}"], 
             check=True)
+    print("Setup for auto-register completed.")
 
 run()

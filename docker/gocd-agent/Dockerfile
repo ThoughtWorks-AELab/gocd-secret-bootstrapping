@@ -1,7 +1,7 @@
 FROM mfanderson/gocd_agent
 
 RUN mkdir -p /etc/vault/certificates
-RUN apk add openjdk8 make docker curl jq
+RUN apk update && apk add openjdk8 make docker curl curl-dev jq
 
 RUN curl -O https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
 RUN chmod +x kubectl

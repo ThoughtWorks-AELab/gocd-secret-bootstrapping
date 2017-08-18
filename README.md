@@ -14,16 +14,16 @@ deeply examined for understanding of how it works.
 * Pipeline service - the service that sets up the world. See /docker/pipeline-service/service. Specifically the interaction with Vault and
     Go CD.
 * Cert generation - some tricks for creating certificates on demand, particularly with handling hosts. /docker/vault/gencerts.sh
-* Example application - example of consuming the secret within the pipeline if you don't have it until the pipeline starts. In this case, 
+* [Example application](https://github.com/ThoughtWorks-AELab/hello-secret-world) - example of consuming the secret within the pipeline if you don't have it until the pipeline starts. In this case, 
     the secret is the login for the container registry. Note how the Vault app id and secret id are the core and all secrets are fetched
-    based on the identity those represent. https://github.com/ThoughtWorks-AELab/hello-secret-world
+    based on the identity those represent. 
 
 ## Notable extras
 
 A few extra things of note that demonstrate strong platform practices that are broadly relevant.
 
-* go script - centralized CLI for developers and ops teams
-* Vault in kubernetes - doesn't demonstrate anything with the back-end, but it does show how you can do TLS end-to-end
+* [go script](https://www.thoughtworks.com/insights/blog/praise-go-script-part-i) - example CLI for developers and ops teams. 
+* Vault in kubernetes - doesn't demonstrate anything with the back end, but it does show how you can do TLS end-to-end
 * Setting up Vault with a kubernetes task. The init approach is valid if using the pgp keys. But don't the unseal. It's just
     for demo purposes. It's a bad plan.
 
@@ -38,11 +38,13 @@ A few extra things of note that demonstrate strong platform practices that are b
     
     `./go install`
 
-* Start docker
-
 * Start minikube:
 
     `minikube start`
+
+To expose docker instance, so you don't have to run another docker, you can run the following script:
+
+    `eval $(minikube docker-env)`
 
 # Building the images
 
@@ -62,7 +64,7 @@ This only has to be done the first time your run, or if you make a change to one
 
 This is a little hacky right now, but will be improved.
 
-* Get the pod for the vault setup task. Depending on spin up time, one may have failed. Choose the one that is "Completed."
+* Get the pod for the vault setup task. Depending on spin up time, one or two may have failed. Choose the one that is "Completed."
 
     `kubectl get pods --show-all | grep vault-setup`
 
@@ -87,7 +89,6 @@ able to see it by going to the URL that was printed out when you started the clu
 # Requirements
 * docker hub account
 * Python 3.6+
-* Docker
 * Minikube
 * virtualenv
 
