@@ -117,7 +117,13 @@ Aspects of this set up that are out of scope and therefore do not meet productio
     * integrated with SSO
     * https
     * spinning up git repo, rather than just requiring it to be pre-setup
-    * Pushing policy and initial project to git for pipeline, rather than interacting directly with Vault and Go
+    * Pushing policy and initial project to git for pipeline, rather than interacting directly with Vault and Go. 
+* Go Cd / docker integration
+    * We are using the docker service running inside of the kubernetes cluster running Go. For security reasons, the cluster used for 
+        building images should be isolated so agents don't have access to the docker daemon controlling them and other infra.
+    * You can see how we're making this work for the demo in go-cd-agent.yaml. Do not take this approach without understanding the ramifications
+        of granting a running container permission to write to its own docker daemon. It's fine for a demo. Not so much for production.
+
 
 # Repos
 
@@ -127,15 +133,17 @@ Aspects of this set up that are out of scope and therefore do not meet productio
 # Roadmap
 
 Path to making this a better reference implementation
-
-* Don't use the root token for the service, but a dedicated token, or even better, an app role
-* Clean up the process for extracting the root token and pulling a token specifically for the pipeline-service
-* Automate the process for setting the registry credentials in vault
-* Pull the hard-coded stuff out of the service, like URLs, and replace with envvars
-* Set permissions on pipeline groups to reflect read-only access to pipelines through UI
-* Add support for "template" secrets: as in things that are team or app specific that need to be configured
-    when application spins up, but shouldn't be public knowledge
-* Demonstrate more clearly the push script as a platform-provided resources, so it exists in the code code. It currently resides in the
-    application code. 
-* Explore whether we can use kubernetes secrets on the filesystem, and then create scripts that are SUIDed to a user that can read them.
-    This would prevent users from stealing secrets, even with pipeline code control.
+ 
+* Approach Stuff
+    * Add support for "template" secrets: as in things that are team or app specific that need to be configured
+        when application spins up, but shouldn't be public knowledge
+    * Explore whether we can use kubernetes secrets on the filesystem, and then create scripts that are SUIDed to a user that can read them.
+        This would prevent users from stealing secrets, even with pipeline code control.
+* Security Stuff
+    * Don't use the root token for the service, but a dedicated token, or even better, an app role
+    * Set permissions on pipeline groups to reflect read-only access to pipelines through UI
+* Cleanup stuff
+    * Clean up the process for extracting the root token and pulling a token specifically for the pipeline-service
+    * Pull the hard-coded stuff out of the service, like URLs, and replace with envvars
+    * Demonstrate more clearly the push script as a platform-provided resources, so it exists in the code. It currently resides in the
+        application code.
