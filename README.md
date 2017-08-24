@@ -22,10 +22,11 @@ deeply examined for understanding of how it works.
 
 A few extra things of note that demonstrate strong platform practices that are broadly relevant.
 
+* Doing Go CD autoregister with kuberentes. See the set-registery-key.py script.
 * [go script](https://www.thoughtworks.com/insights/blog/praise-go-script-part-i) - example CLI for developers and ops teams. 
 * Vault in kubernetes - doesn't demonstrate anything with the back end, but it does show how you can do TLS end-to-end
-* Setting up Vault with a kubernetes task. The init approach is valid if using the pgp keys. But don't the unseal. It's just
-    for demo purposes. It's a bad plan.
+* Setting up Vault with a kubernetes task. The init approach is valid if using the pgp keys. But don't automate the unseal. It's just
+    for demo purposes.
 
 # Setup
 * Run virtual env to create a python 3.6+ environment and activate it.
